@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from numpy import sign
 
-def calculate_acceleration_y(v, k=0.0, mass=1.0, gravity=-9.81):
+def calculate_acceleration_y(v_y, k=0.0, mass=1.0, gravity=-9.81):
     '''
     Calculate the acceleration based on combined forces from gravity and 
     air resistance.
@@ -24,11 +24,11 @@ def calculate_acceleration_y(v, k=0.0, mass=1.0, gravity=-9.81):
     force_gravity = mass*gravity
     force_air = -sign(v)*k*v**2
     total_force = force_gravity + force_air
-    a_y = total_force/mass
+    a = total_force/mass
     
-    return a_y
+    return a
 
-def calculate_acceleration_x(v, k=0.0, mass=1.0):
+def calculate_acceleration_x(v_x, k=0.0, mass=1.0):
     '''
     Calculate the acceleration based on 
     air resistance.
@@ -53,7 +53,7 @@ def calculate_acceleration_x(v, k=0.0, mass=1.0):
     total_force = force_air
     a_x = total_force/mass
     
-    return a_x
+    return a
 
 
 def update_state(t, x, v, a, dt=0.1):
@@ -76,7 +76,7 @@ def update_state(t, x, v, a, dt=0.1):
     return t, x, v
 
 
-def flying_mass(initial_height, k=0.0, mass=1.0, dt=0.1):
+def flying_mass(start_x_velocity, start_x_velocity, initial_height = 0.0, k=0.0, mass=1.0, dt=0.1):
     '''
     Model a falling mass from a given height.
     
@@ -120,8 +120,8 @@ def flying_mass(initial_height, k=0.0, mass=1.0, dt=0.1):
     # Keep looping while the object is still falling
     while h > 0:
         # Evaluate the state of the system - start by calculating the total force on the object
-        a_y = calculate_acceleration_y(v, k=k, mass=mass, gravity=gravity)
-        a_x = calculate_acceleration_x(v, k=k, mass=mass)
+        a_y = calculate_acceleration_y(v_y, k=k, mass=mass, gravity=gravity)
+        a_x = calculate_acceleration_x(v_x, k=k, mass=mass)
 
         # Append values to list and then update
         y_velocity.append(v_y)
@@ -131,9 +131,13 @@ def flying_mass(initial_height, k=0.0, mass=1.0, dt=0.1):
         height.append(h)
 
         # Update the state for time, height and velocity
-        t, h, v = update_state(t, h, v_y, a_y, dt=dt)
-        t, h, v = update_state(t, h, v_x, a_x, dt=dt)    
+    h, v_y = update_state(t, h, v_y, a, dt=dt)
+    x_distance_moved, v_x = update_state(t, x_distance_moved, v_x, a_x, dt=dt)    
     
         return time,x_velocity, y_velocity, x_distance, height
     
-    t, x, h, v_y, v_x = flying_mass(20, k=0.035)
+    time, x_velocity, y_velocity, x_distance, height = flying_mass(10., 10.,mass = 1, k=0.035)
+    
+
+    
+    
