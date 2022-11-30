@@ -30,7 +30,7 @@ def calculate_acceleration_y(v, k=0.0, mass=1.0, gravity=-9.81):
 
 def calculate_acceleration_x(v, k=0.0, mass=1.0):
     '''
-    Calculate the acceleration based on combined forces from gravity and 
+    Calculate the acceleration based on 
     air resistance.
     Args:
         v (float) : 
@@ -70,7 +70,7 @@ def update_state(t, x, v, a, dt=0.1):
     distance_moved = v*dt + (1/2)*a*(dt**2)
     v += a*dt
     t += dt
-
+    
     x += distance_moved
     
     return t, x, v
@@ -98,13 +98,15 @@ def flying_mass(initial_height, k=0.0, mass=1.0, dt=0.1):
         list, list, list : Three lists containing the time, height and velocity
     '''
     # Fixed input values
-    start_velocity = 10.0 # m/s
+    start_x_velocity = 10.0 # m/s
+    start_y_velocity = 10.0 # m/s
     gravity = -9.81 # m/s2
 
     # Initial values for our parameters
-    distance_moved = 0
+    x_distance_moved = 0
     h = initial_height
-    v = start_velocity
+    v_x= start_x_velocity
+    v_y = start_y_velocity
     t = 0.0
     
 
@@ -113,7 +115,7 @@ def flying_mass(initial_height, k=0.0, mass=1.0, dt=0.1):
     y_velocity = []
     time = []
     x_distance = []
-    y_distance =[]
+    height =[]
 
     # Keep looping while the object is still falling
     while h > 0:
@@ -122,14 +124,16 @@ def flying_mass(initial_height, k=0.0, mass=1.0, dt=0.1):
         a_x = calculate_acceleration_x(v, k=k, mass=mass)
 
         # Append values to list and then update
-        y_velocity.append(h)
-        x_velocity.append(v)
+        y_velocity.append(v_y)
+        x_velocity.append(v_x)
         time.append(t)
-        x_distance.append()
-        y_distance.append()
+        x_distance.append(x_distance_moved)
+        height.append(h)
 
         # Update the state for time, height and velocity
-        t, h, v = update_state(t, h, v, a_y, dt=dt)
-        t, h, v = update_state(t, h, v, a_x, dt=dt)    
+        t, h, v = update_state(t, h, v_y, a_y, dt=dt)
+        t, h, v = update_state(t, h, v_x, a_x, dt=dt)    
     
-        return time, height, velocity
+        return time,x_velocity, y_velocity, x_distance, height
+    
+    t, x, h, v_y, v_x = flying_mass(20, k=0.035)
